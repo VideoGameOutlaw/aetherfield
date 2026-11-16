@@ -1,6 +1,17 @@
+<div align="center">
+
 # Aetherfield
 
-**An experiment: a real-time GPU particle studio for generative art, built by an AI model.**
+**A real-time GPU particle studio for generative art — an experiment built by an AI model.**
+
+[**▶ Open the live demo**](https://videogameoutlaw.github.io/aetherfield/)
+
+![Built by Kimi 3.1 Pro](https://img.shields.io/badge/built%20by-Kimi%203.1%20Pro-8b5cf6?style=flat-square)
+![WebGL2](https://img.shields.io/badge/WebGL2-GLSL-22d3ee?style=flat-square)
+![Runtime dependencies: 0](https://img.shields.io/badge/runtime%20deps-0-f472b6?style=flat-square)
+![Status: experiment](https://img.shields.io/badge/status-experiment-64748b?style=flat-square)
+
+</div>
 
 > **This is a concept, not a product.** Aetherfield was an experiment to see how far Kimi 3.1 Pro could take a single idea — a browser-based particle studio — starting from a one-shot prompt and then testing and refining its own work. The code, the tests, and most of this README were written by the model. It is published as-is for anyone curious about the result; it is not maintained and there is no roadmap.
 
