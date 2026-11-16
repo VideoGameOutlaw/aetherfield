@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#05050a" />
+    <meta name="description" content="Aetherfield is a real-time GPU particle studio. Shape a small universe, tune its physics, and capture generative art in your browser." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Aetherfield — Generative Particle Studio</title>
+  </head>
+  <body data-ui-hidden="false">
+    <svg class="svg-sprite" aria-hidden="true">
+      <symbol id="icon-logo" viewBox="0 0 32 32">
+        <circle cx="16" cy="16" r="3" fill="currentColor" />
+        <ellipse cx="16" cy="16" rx="14" ry="6.5" fill="none" stroke="currentColor" stroke-width="1.2" transform="rotate(-35 16 16)" />
+        <ellipse cx="16" cy="16" rx="14" ry="6.5" fill="none" stroke="currentColor" stroke-width="1.2" transform="rotate(35 16 16)" opacity=".55" />
+        <circle cx="27" cy="10" r="1.5" fill="currentColor" />
+      </symbol>
+      <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 11v6m0-10v.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+      <symbol id="icon-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="6" cy="12" r="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="19" r="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m8.2 10.8 7.6-4.5m-7.6 6.9 7.6 4.5" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+      <symbol id="icon-record" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="currentColor"/></symbol>
+      <symbol id="icon-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M5 19h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="icon-pause" viewBox="0 0 24 24"><path d="M8 6v12M16 6v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+      <symbol id="icon-play" viewBox="0 0 24 24"><path d="m9 5 10 7-10 7Z" fill="currentColor"/></symbol>
+      <symbol id="icon-reset" viewBox="0 0 24 24"><path d="M5 8V4m0 0h4M5 4l3 3a7 7 0 1 1-2 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="icon-shuffle" viewBox="0 0 24 24"><path d="M4 7h2.5c5 0 6 10 11 10H20m-3-3 3 3-3 3M4 17h2.5c2 0 3.3-1.6 4.5-3.7M14 7.5c1-1 2-1.5 3.5-1.5H20m-3-3 3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="icon-attract" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="12" cy="12" r="6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2 2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+      <symbol id="icon-sliders" viewBox="0 0 24 24"><path d="M4 7h9m4 0h3M4 17h3m4 0h9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="15" cy="7" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="9" cy="17" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+      <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    </svg>
+
+    <main class="studio" data-app="aetherfield">
+      <canvas id="field" tabindex="0" aria-label="Interactive generative particle field. Move your pointer to bend the current and hold to increase its force."></canvas>
+      <div class="scene-shade" aria-hidden="true"></div>
+
+      <section id="unsupported" class="unsupported" role="alert" hidden>
+        <svg class="icon"><use href="#icon-logo"></use></svg>
+        <p class="eyebrow">RENDERER OFFLINE</p>
+        <h1>This universe needs WebGL2.</h1>
+        <p id="unsupported-message">Enable hardware acceleration or open Aetherfield in a current browser.</p>
+      </section>
+
+      <header class="topbar interface">
+        <div class="brand" aria-label="Aetherfield">
+          <svg class="brand-mark"><use href="#icon-logo"></use></svg>
+          <span>AETHERFIELD</span>
+          <span class="brand-edition">/ 01</span>
+        </div>
+
+        <div class="live-status" aria-label="Simulation running on GPU">
+          <span class="status-dot"></span>
+          <span>GPU SIMULATION</span>
+          <span class="status-divider"></span>
+          <span id="header-seed">AETHERFIELD</span>
+        </div>
+
+        <nav class="top-actions" aria-label="Studio actions">
+          <button id="about-open" class="icon-button" type="button" aria-label="About Aetherfield" title="About & shortcuts">
+            <svg class="icon"><use href="#icon-info"></use></svg>
+          </button>
+          <button id="share" class="button button-quiet" type="button" aria-label="Copy field share link">
+            <svg class="icon"><use href="#icon-share"></use></svg>
+            <span class="button-label">Share</span>
+          </button>
+          <button id="record" class="button button-quiet" type="button" data-recording="false" aria-label="Start video recording">
+            <svg class="icon record-icon"><use href="#icon-record"></use></svg>
+            <span class="button-label" id="record-label">Record</span>
+          </button>
+          <button id="export-png" class="button button-primary" type="button" aria-label="Export PNG image">
+            <svg class="icon"><use href="#icon-download"></use></svg>
+            <span class="button-label">Export PNG</span>
+          </button>
+        </nav>
+      </header>
+
+      <section class="field-copy interface" aria-live="polite">
+        <p class="eyebrow"><span id="preset-number">FIELD 01</span><span class="eyebrow-line"></span><span id="preset-mode">CURL / ORBIT</span></p>
+        <h1 id="preset-name">Nebula</h1>
+        <p id="preset-tagline" class="field-tagline">Chaotic beauty, held in orbit.</p>
+        <p id="preset-description" class="field-description">A violet deep-space current with electric edges and a softly glowing core.</p>
+      </section>
+
+      <aside id="control-panel" class="control-panel interface" data-open="true" aria-label="Field controls">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">CONTROL SURFACE</p>
+            <h2>Shape the current.</h2>
+          </div>
+          <button id="controls-close" class="icon-button panel-close" type="button" aria-label="Close controls">
+            <svg class="icon"><use href="#icon-close"></use></svg>
+          </button>
+        </div>
+
+        <section class="panel-section preset-section" aria-labelledby="presets-heading">
+          <div class="section-heading"><h3 id="presets-heading">Field presets</h3><span>01—04</span></div>
+          <div id="preset-grid" class="preset-grid"></div>
+        </section>
+
+        <section class="panel-section" aria-labelledby="motion-heading">
+          <div class="section-heading"><h3 id="motion-heading">Motion</h3><span>LIVE</span></div>
+          <div class="slider-control">
+            <div class="control-label"><label for="flow">Flow</label><output id="flow-value" for="flow">0.95</output></div>
+            <input id="flow" type="range" min="0" max="2" step="0.01" />
+          </div>
+          <div class="slider-control">
+            <div class="control-label"><label for="speed">Speed</label><output id="speed-value" for="speed">0.72</output></div>
+            <input id="speed" type="range" min="0.1" max="1.8" step="0.01" />
+          </div>
+          <div class="slider-control">
+            <div class="control-label"><label for="turbulence">Turbulence</label><output id="turbulence-value" for="turbulence">1.15</output></div>
+            <input id="turbulence" type="range" min="0" max="2" step="0.01" />
+          </div>
+          <div class="slider-control">
+            <div class="control-label"><label for="trail">Trail persistence</label><output id="trail-value" for="trail">96%</output></div>
+            <input id="trail" type="range" min="0.8" max="0.985" step="0.001" />
+          </div>
+          <div class="slider-control">
+            <div class="control-label"><label for="pointSize">Particle size</label><output id="pointSize-value" for="pointSize">1.35</output></div>
+            <input id="pointSize" type="range" min="0.6" max="2.6" step="0.01" />
+          </div>
+        </section>
+
+        <section class="panel-section palette-section" aria-labelledby="palette-heading">
+          <div class="section-heading"><h3 id="palette-heading">Spectrum</h3><span>RGB</span></div>
+          <div class="palette-controls">
+            <label class="color-control"><input id="color-a" type="color" aria-label="Primary particle color" /><span>Primary</span></label>
+            <label class="color-control"><input id="color-b" type="color" aria-label="Secondary particle color" /><span>Secondary</span></label>
+            <label class="color-control"><input id="color-c" type="color" aria-label="Accent particle color" /><span>Accent</span></label>
+          </div>
+        </section>
+
+        <section class="panel-section density-section" aria-labelledby="density-heading">
+          <div class="section-heading"><h3 id="density-heading">Resolution</h3><span>FLOAT 32</span></div>
+          <label class="select-label" for="particle-count">Particle count</label>
+          <div class="select-wrap">
+            <select id="particle-count">
+              <option value="60000">60,000 — Draft</option>
+              <option value="120000">120,000 — Balanced</option>
+              <option value="180000">180,000 — Studio</option>
+              <option value="262144">262,144 — Ultra</option>
+            </select>
+            <span aria-hidden="true">⌄</span>
+          </div>
+        </section>
+
+        <div class="engine-stats" aria-label="Renderer statistics">
+          <span><span class="status-dot"></span><span id="engine-state">LIVE</span></span>
+          <span><span id="fps">60</span> FPS</span>
+          <span id="particle-stat">180K PTS</span>
+        </div>
+      </aside>
+
+      <div class="transport interface" role="toolbar" aria-label="Simulation transport">
+        <button id="play-toggle" class="transport-button" type="button" aria-label="Pause field" title="Pause / play (Space)">
+          <svg class="icon"><use id="play-icon" href="#icon-pause"></use></svg>
+        </button>
+        <button id="reset" class="transport-button" type="button" aria-label="Restart field" title="Restart field (R)">
+          <svg class="icon"><use href="#icon-reset"></use></svg>
+        </button>
+        <button id="randomize" class="transport-button" type="button" aria-label="New seed" title="New seed (N)">
+          <svg class="icon"><use href="#icon-shuffle"></use></svg>
+        </button>
+        <span class="transport-divider" aria-hidden="true"></span>
+        <button id="pointer-mode" class="transport-button pointer-button" type="button" aria-label="Switch pointer force to repel" title="Toggle attract / repel">
+          <svg class="icon"><use href="#icon-attract"></use></svg>
+          <span id="pointer-mode-label">Attract</span>
+        </button>
+      </div>
+
+      <div class="interaction-hint interface" aria-hidden="true">
+        <span class="mouse-glyph"></span>
+        <span>MOVE TO BEND&nbsp;&nbsp;·&nbsp;&nbsp;HOLD TO PULL</span>
+      </div>
+
+      <button id="controls-toggle" class="controls-toggle interface" type="button" aria-controls="control-panel" aria-expanded="false">
+        <svg class="icon"><use href="#icon-sliders"></use></svg><span>Tune</span>
+      </button>
+
+      <div id="recording-status" class="recording-status" role="status" hidden>
+        <span class="recording-dot"></span><span>REC</span><span id="recording-time">00:00</span>
+      </div>
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    </main>
+
+    <dialog id="about" class="about-dialog" aria-labelledby="about-title">
+      <button id="about-close" class="icon-button dialog-close" type="button" aria-label="Close about dialog">
+        <svg class="icon"><use href="#icon-close"></use></svg>
+      </button>
+      <p class="eyebrow">ABOUT THE INSTRUMENT</p>
+      <h2 id="about-title">A small universe,<br />computed live.</h2>
+      <p class="about-intro">Aetherfield turns curl noise, orbital forces, and your pointer into an evolving particle instrument. Every frame is simulated on your GPU—nothing here is a video or a pre-rendered loop.</p>
+      <div class="about-metrics">
+        <div><strong>262K</strong><span>maximum particles</span></div>
+        <div><strong>2×</strong><span>float render targets</span></div>
+        <div><strong>0</strong><span>runtime libraries</span></div>
+      </div>
+      <div class="shortcut-grid" aria-label="Keyboard shortcuts">
+        <span><kbd>Space</kbd> Pause / play</span><span><kbd>H</kbd> Hide interface</span>
+        <span><kbd>R</kbd> Restart field</span><span><kbd>N</kbd> New seed</span>
+        <span><kbd>1—4</kbd> Switch preset</span><span><kbd>F</kbd> Fullscreen</span>
+      </div>
+      <p class="about-note">Built with WebGL2, GLSL, and vanilla JavaScript. Deterministic seeds and URL sharing make every discovery reproducible.</p>
+      <footer id="build-credit" class="build-credit">
+        <span class="build-credit-kicker">MADE BY</span>
+        <strong>Kimi 3.1 Pro</strong>
+        <span>One-shot concept · tested, refined &amp; optimized</span>
+      </footer>
+      <button id="about-explore" class="button button-primary about-explore" type="button">Back to the field<svg class="icon"><use href="#icon-arrow"></use></svg></button>
+    </dialog>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
